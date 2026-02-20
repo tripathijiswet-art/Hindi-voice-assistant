@@ -10,10 +10,10 @@ from queue import Queue
 import threading
 import time
 
-from text_reader_module import TextReader
-from music_player_module import MusicPlayer
-from save_contact import extract_number, save_contact_direct
-from save_contact import load_contacts, extract_name_from_text
+from windows.text_reader_module import TextReader
+from windows.music_player_module import MusicPlayer
+from windows.save_contact import extract_number, save_contact_direct
+from windows.save_contact import load_contacts, extract_name_from_text
 
 # -----------------------------
 # CONFIG

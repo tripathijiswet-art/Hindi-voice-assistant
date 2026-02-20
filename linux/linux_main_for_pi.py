@@ -15,10 +15,10 @@ import threading
 import time
 import re
 
-from linux_text_for_pi import TextReader
-from linux_music_for_pi import MusicPlayer
-from linux_contact_for_pi import extract_number, save_contact_direct
-from linux_contact_for_pi import load_contacts, extract_name_from_text
+from linux.linux_text_for_pi import TextReader
+from linux.linux_music_for_pi import MusicPlayer
+from linux.linux_contact_for_pi import extract_number, save_contact_direct
+from linux.linux_contact_for_pi import load_contacts, extract_name_from_text
 
 # -----------------------------
 # CONFIG
