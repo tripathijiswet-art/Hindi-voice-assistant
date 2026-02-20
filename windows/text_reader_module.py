@@ -3,9 +3,9 @@ import re
 import time
 import threading
 
-# ============================================================
+
 # TXT Reader Module (Search + Read by Name + Pause/Resume/Stop)
-# ============================================================
+
 
 def read_text_file(filepath: str):
     try:
@@ -81,9 +81,9 @@ class TextReader:
 
         self.refresh_index()
 
-    # -----------------------------
+    
     # FILE INDEX
-    # -----------------------------
+    
     def normalize_name(self, name: str) -> str:
         name = name.lower().strip()
         name = name.replace(".txt", "").strip()
@@ -149,7 +149,7 @@ class TextReader:
             self.txt_index = new_index
 
         total = sum(len(v) for v in new_index.values())
-        print(f"✅ [TextReader] Indexed {total} .txt files from: {self.search_root_dir}")
+        print(f"[TextReader] Indexed {total} .txt files from: {self.search_root_dir}")
 
     def find_file_by_name(self, spoken_name: str):
         key = self.normalize_name(spoken_name)
@@ -166,13 +166,10 @@ class TextReader:
 
         return None, None
 
-    # -----------------------------
+    
     # READ TXT
-    # -----------------------------
-
-    # -----------------------------
     # PUBLIC CONTROLS
-    # -----------------------------
+    
     def is_active(self):
         return self.reading_active.is_set()
 
@@ -194,7 +191,7 @@ class TextReader:
         if self.reading_active.is_set():
             self.stop_event.set()
             self.pause_event.clear()
-            self.stop_tts_immediately()  # ✅ instant stop
+            self.stop_tts_immediately()  # instant stop
             print("✅ [TextReader] STOP triggered.")
             return True
         return False
@@ -208,9 +205,8 @@ class TextReader:
             return True
         return False
 
-    # -----------------------------
     # START READING BY NAME
-    # -----------------------------
+    
     def start_read_by_name(self, spoken_name: str):
         if self.reading_active.is_set():
             self.speak_and_wait("मैं अभी जानकारी दे रही हूँ। पहले stop बोलो।")
@@ -275,7 +271,7 @@ class TextReader:
                 # We wait in small 100ms increments so we can catch a Pause/Stop command.
 
                 # Estimate: Average person speaks 3-4 words per second.
-                # Adjust '0.15' based on your TTS speed.
+                
                 estimated_duration = len(chunk) * 0.15
 
                 start_time = time.time()
@@ -295,4 +291,4 @@ class TextReader:
 
         finally:
             self.reading_active.clear()
-            print("📖 Reading thread finished.")
+            print(" Reading thread finished.")

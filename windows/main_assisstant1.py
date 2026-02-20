@@ -15,9 +15,9 @@ from windows.music_player_module import MusicPlayer
 from windows.save_contact import extract_number, save_contact_direct
 from windows.save_contact import load_contacts, extract_name_from_text
 
-# -----------------------------
+
 # CONFIG
-# -----------------------------
+
 ESPEAK_PATH = r"C:\Program Files\eSpeak NG\espeak-ng.exe"
 SAMPLE_RATE = 16000
 MODEL_PATH = "model-hi"
@@ -29,15 +29,15 @@ WAKE_WORDS = [
     "सुनो", "अरे सुनो", "दीपू", "ओके दीपू", "हेलो दीपू"
 ]
 
-# ✅ root folder where your txt files exist (all subfolders included)
+#  root folder where your txt files exist (all subfolders included)
 SEARCH_ROOT_DIR = r"C:\Users\shash\vosk_setup\readfiles"
 
 MUSIC_FOLDER = r"C:\Users\shash\vosk_setup\music"
 music_player = MusicPlayer(MUSIC_FOLDER)
 
-# -----------------------------
+
 # QUEUES & EVENTS
-# -----------------------------
+
 text_queue = Queue()
 tts_queue = Queue()
 is_speaking = threading.Event()
@@ -58,9 +58,9 @@ suggestion_since = 0
 FILENAME_TIMEOUT = 10
 SUGGESTION_TIMEOUT = 7
 
-# -----------------------------
+
 # Contact Flow
-# -----------------------------
+
 contact_flow = {
     "active": False,
     "name": None,
@@ -80,9 +80,9 @@ def smooth_text(text):
     text = text.replace("!", "! ")
     return text
 
-# ---------------------------------------------------------
+
 # HELPER: Map Digits to Hindi Words (Forces Digit-by-Digit)
-# ---------------------------------------------------------
+
 def number_to_hindi_words(num_str):
     digit_map = {
         '0': 'शून्य', '1': 'एक', '2': 'दो', '3': 'तीन', '4': 'चार',
@@ -91,9 +91,9 @@ def number_to_hindi_words(num_str):
     # Converts "98" to "नौ आठ"
     return " ".join([digit_map.get(d, d) for d in num_str if d.isdigit()])
 
-# -----------------------------
-# ✅ FORCE STOP TTS (Instant)
-# -----------------------------
+
+# FORCE STOP TTS (Instant)
+
 def stop_tts_immediately():
     global current_tts_process
 
@@ -115,9 +115,9 @@ def stop_tts_immediately():
         pass
 
 
-# -----------------------------
-# TTS THREAD (Interruptible ✅)
-# -----------------------------
+
+# TTS THREAD (Interruptible )
+
 
 def tts_worker():
     global current_tts_process
@@ -153,7 +153,7 @@ def tts_worker():
                 winsound.PlaySound(wav_path, winsound.SND_FILENAME)
 
         except Exception as e:
-            print("❌TTS Error:", e)
+            print("TTS Error:", e)
 
 
         finally:
@@ -185,9 +185,9 @@ def speak_and_wait(text):
     tts_queue.put(text)
     tts_queue.join()
 
-# -----------------------------
+
 # STT Setup
-# -----------------------------
+
 audio_queue = Queue()
 
 is_listening = threading.Event()
@@ -197,9 +197,9 @@ model = Model(MODEL_PATH)
 rec = KaldiRecognizer(model, SAMPLE_RATE)
 
 
-print("✅ Offline Voice Assistant started!")
-print("🛌 Sleeping mode ON (Say wake word like: 'दीपू' / 'सुनो' / 'hey assistant')")
-print(f"📁 TXT search root: {SEARCH_ROOT_DIR}")
+print("Offline Voice Assistant started!")
+print("Sleeping mode ON (Say wake word like: 'दीपू' / 'सुनो' / 'hey assistant')")
+print(f"TXT search root: {SEARCH_ROOT_DIR}")
 
 running = True
 awake_until = 0
@@ -232,9 +232,9 @@ def callback(indata, frames, time_info, status):
         # Optional: debug partial results
         partial = json.loads(rec.PartialResult()).get("partial", "")
 
-# -----------------------------
+
 # commands file execution
-# -----------------------------
+
 
 def load_commands(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
@@ -259,9 +259,9 @@ TEXT_PAUSE_COMMANDS = load_commands(r"commands\text_reader\pause")
 TEXT_RESUME_COMMANDS = load_commands(r"commands\text_reader\resume")
 TEXT_STOP_COMMANDS = load_commands(r"commands\text_reader\stop")
 
-# -----------------------------
-# ✅ INIT TextReader (Module)
-# -----------------------------
+
+# INIT TextReader (Module)
+
 text_reader = TextReader(
     speak=speak,
     speak_and_wait=speak_and_wait,
@@ -269,29 +269,29 @@ text_reader = TextReader(
     search_root_dir=SEARCH_ROOT_DIR #file_path=TEXT_FILE #single file
 )
 
-# -----------------------------
+
 # Intent Recognition
-# -----------------------------
+
 def recognize_intent(text: str):
     t = text.lower().strip()
 
-    # ✅ EXIT
+    # EXIT
     if any(x in t for x in EXIT_COMMANDS):
         return "exit", {}
 
-    # ✅ TIME
+    # TIME
     if any(x in t for x in TIME_COMMANDS):
         return "time", {}
 
-    # ✅ DATE
+    # DATE
     if any(x in t for x in DATE_COMMANDS):
         return "date", {}
 
-    # ✅ GREETING
+    # GREETING
     if any(x in t for x in GREETING_COMMANDS):
         return "greet", {}
 
-    # ✅ THANKS
+    # THANKS
     if any(x in t for x in THANKS_COMMANDS):
         return "thanks", {}
 
@@ -347,7 +347,7 @@ def recognize_intent(text: str):
     if any(x in t for x in PREV_MUSIC_COMMANDS):
         return "music_prev", {}
 
-    # ✅ Play by song name
+    #  Play by song name
     if t.startswith("play "):
         name = t.replace("play ", "").strip()
         if name:
@@ -363,9 +363,9 @@ def recognize_intent(text: str):
     return "unknown", {"text": text}
 
 
-# -----------------------------
+
 # Handle Intent
-# -----------------------------
+
 def handle_intent(intent, slots):
     global awaiting_filename, awaiting_suggestion_choice
     global suggested_files, suggestion_since
@@ -373,10 +373,10 @@ def handle_intent(intent, slots):
     now = time.time()
     raw_text = slots.get("text", "").strip()
 
-    # ======================================================
-    # 🚨 PRIORITY 1: ACTIVE CONTACT FLOW
+    
+    #  PRIORITY 1: ACTIVE CONTACT FLOW
     # (Check this FIRST so we don't get "Unknown Command")
-    # ======================================================
+    # 
     if contact_flow["active"]:
         # Allow user to cancel
         if intent == "exit":
@@ -422,9 +422,9 @@ def handle_intent(intent, slots):
                 speak_and_wait("नंबर समझ नहीं आया।")
             return True
 
-    # ======================================================
+    
     # 🚨 PRIORITY 2: GET CONTACT FLOW (Asking "Whose number?")
-    # ======================================================
+    
     if get_contact_flow["active"]:
         name = extract_name_from_text(slots.get("text", ""))
         contacts = load_contacts()
@@ -441,9 +441,9 @@ def handle_intent(intent, slots):
         get_contact_flow["active"] = False
         return True
 
-    # ======================================================
-    # 🚨 PRIORITY 3: STANDARD COMMANDS
-    # ======================================================
+    
+    #  PRIORITY 3: STANDARD COMMANDS
+    
 
     if intent == "start_contact":
         contact_flow["active"] = True
@@ -627,9 +627,9 @@ def handle_intent(intent, slots):
     return True
 
 
-# -----------------------------
+
 # WAKE WORD CHECK
-# -----------------------------
+
 def is_wake_word(text):
     text = text.strip().lower()
 
@@ -639,12 +639,12 @@ def is_wake_word(text):
 
     return False
 
-# -----------------------------
+
 # MAIN LOOP
-# -----------------------------
+
 try:
     with sd.RawInputStream(samplerate=SAMPLE_RATE, blocksize=4000, dtype="int16", channels=1, callback=callback):
-        print("\n✅ System Online...")
+        print("\nSystem Online...")
         speak("सिस्टम ऑनलाइन. मैं रेडी हु.")
 
         running = True
@@ -661,49 +661,49 @@ try:
 
                 now_ts = time.time()
 
-                print("\n🗣️ You said:", text)
+                print("\nYou said:", text)
 
                 intent, slots = recognize_intent(text)
 
-                handled = False  # 🔑 key flag
+                handled = False  # key flag
 
-                # ======================================================
-                # 📖 TEXT READER ACTIVE → allow text controls ONLY
-                # ======================================================
+                
+                #  TEXT READER ACTIVE → allow text controls ONLY
+                
                 if text_reader.is_active():
                     if intent in ("pause_txt", "resume_txt", "stop_txt", "exit"):
                         running = handle_intent(intent, slots)
                         handled = True
                     else:
-                        print("📖 Text reading active — ignoring non-text command")
+                        print("Text reading active — ignoring non-text command")
 
-                # ======================================================
-                # 🎧 MUSIC ACTIVE → allow music controls ONLY
-                # ======================================================
+                
+                # MUSIC ACTIVE → allow music controls ONLY
+            
                 elif music_player.is_active():
                     if intent.startswith("music_"):
                         running = handle_intent(intent, slots)
                         handled = True
                     else:
-                        print("🎧 Music playing — ignoring non-music command")
+                        print(" Music playing — ignoring non-music command")
 
-                # ======================================================
-                # 🧠 IDLE MODE → normal assistant behavior
-                # ======================================================
+                
+                # IDLE MODE → normal assistant behavior
+                
                 else:
-                    # ---- filename timeout ----
+                    #  filename timeout 
                     if awaiting_filename:
                         if time.time() - awaiting_filename_since > FILENAME_TIMEOUT:
                             awaiting_filename = False
                             speak_and_wait("ठीक है, बाद में बताइए।")
 
-                    # ---- suggestion timeout ----
+                    # suggestion timeout 
                     if awaiting_suggestion_choice:
                         if time.time() - suggestion_since > SUGGESTION_TIMEOUT:
                             awaiting_suggestion_choice = False
                             speak_and_wait("ठीक है, बाद में बताइए।")
 
-                    # ---- wake-word gating ----
+                    # wake-word gating
                     if now_ts > awake_until:
                         if not is_wake_word(text):
                             continue
@@ -728,7 +728,7 @@ try:
             sd.sleep(50)
 
 except KeyboardInterrupt:
-    print("\n🛑 Stopped by user.")
+    print("\n Stopped by user.")
     text_reader.stop_silent()
     stop_tts_immediately()
     speak_and_wait("ठीक है भाई, बंद कर रहा हूँ ")

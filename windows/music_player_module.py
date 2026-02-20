@@ -23,9 +23,9 @@ class MusicPlayer:
 
         self.refresh_library()
 
-    # -----------------------------
+    
     # Library Scan
-    # -----------------------------
+    
     def refresh_library(self):
         supported = (".mp3", ".wav", ".ogg")
 
@@ -39,7 +39,7 @@ class MusicPlayer:
         self.songs = songs
         self.song_names = [self._normalize(os.path.splitext(os.path.basename(x))[0]) for x in songs]
 
-        print(f"✅ [MusicPlayer] Loaded {len(self.songs)} songs from: {self.music_root_folder}")
+        print(f"[MusicPlayer] Loaded {len(self.songs)} songs from: {self.music_root_folder}")
 
     def _normalize(self, text: str) -> str:
         return " ".join(text.lower().strip().split())
@@ -50,9 +50,9 @@ class MusicPlayer:
             out.append(f"{i}. {os.path.basename(p)}")
         return out
 
-    # -----------------------------
+    
     # Core Controls
-    # -----------------------------
+    
     def play_index(self, index: int):
         with self.lock:
             if not self.songs:
@@ -120,9 +120,9 @@ class MusicPlayer:
                 return True, "Music stopped."
             return False, "Nothing is playing."
 
-    # -----------------------------
+    
     # Play by Name (voice)
-    # -----------------------------
+    
     def play_by_name(self, spoken_name: str):
         """
         spoken_name example: "kesariya", "tum hi ho"

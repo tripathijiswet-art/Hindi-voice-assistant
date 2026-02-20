@@ -33,9 +33,9 @@ class MusicPlayer:
         """Cleanup when the class is destroyed"""
         pygame.mixer.quit()
 
-    # -----------------------------
+    
     # Library Scan
-    # -----------------------------
+    
     def refresh_library(self):
         supported = (".mp3", ".wav", ".ogg")
 
@@ -67,12 +67,12 @@ class MusicPlayer:
             out.append(f"{i}. {os.path.basename(p)}")
         return out
 
-    # -----------------------------
+
     # Core Controls
-    # -----------------------------
+    
     def set_volume(self, level: float):
         """Set volume from 0.0 to 1.0"""
-        # --- PI CHANGE 2: Volume Control ---
+        #  PI CHANGE 2: Volume Control 
         try:
             pygame.mixer.music.set_volume(level)
             return True, f"Volume set to {int(level*100)}%"
@@ -150,9 +150,9 @@ class MusicPlayer:
                 return True, "Music stopped."
             return False, "Nothing is playing."
 
-    # -----------------------------
+
     # Play by Name (voice)
-    # -----------------------------
+    
     def play_by_name(self, spoken_name: str):
         """
         spoken_name example: "kesariya", "tum hi ho"

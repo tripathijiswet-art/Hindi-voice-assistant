@@ -3,9 +3,9 @@ import re
 import time
 import threading
 
-# ============================================================
-# TXT Reader Module (Optimized for Raspberry Pi)
-# ============================================================
+
+# TXT Reader Module 
+
 
 def read_text_file(filepath: str):
     try:
@@ -68,9 +68,9 @@ class TextReader:
 
         self.refresh_index()
 
-    # -----------------------------
+    
     # FILE INDEXING
-    # -----------------------------
+    
     def normalize_name(self, name: str) -> str:
         name = name.lower().strip()
         name = name.replace(".txt", "").strip()
@@ -132,9 +132,9 @@ class TextReader:
                     return paths[0], paths
         return None, None
 
-    # -----------------------------
+    
     # CONTROLS
-    # -----------------------------
+    
     def is_active(self):
         return self.reading_active.is_set()
 
@@ -168,9 +168,9 @@ class TextReader:
             return True
         return False
 
-    # -----------------------------
+    
     # READ WORKER (Pi Optimized)
-    # -----------------------------
+    
     def start_read_by_name(self, spoken_name: str):
         if self.reading_active.is_set():
             self.speak_and_wait("पहले रुकिए।")

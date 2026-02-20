@@ -20,9 +20,9 @@ from linux.linux_music_for_pi import MusicPlayer
 from linux.linux_contact_for_pi import extract_number, save_contact_direct
 from linux.linux_contact_for_pi import load_contacts, extract_name_from_text
 
-# -----------------------------
+
 # CONFIG
-# -----------------------------
+
 
 def find_usb_mic():
     devices = sd.query_devices()
@@ -81,9 +81,9 @@ os.makedirs(MUSIC_FOLDER, exist_ok=True)
 
 music_player = MusicPlayer(MUSIC_FOLDER)
 
-# -----------------------------
+
 # QUEUES & EVENTS
-# -----------------------------
+
 text_queue = Queue()
 tts_queue = Queue()
 is_speaking = threading.Event()
@@ -104,9 +104,9 @@ suggested_files = []
 suggestion_since = 0
 SUGGESTION_TIMEOUT = 7
 
-# -----------------------------
+
 # Contact Flow
-# -----------------------------
+
 contact_flow = {
     "active": False,
     "name": None,
@@ -128,9 +128,8 @@ def smooth_text(text):
     return text
 
 
-# ---------------------------------------------------------
 # HELPER: Map Digits to Hindi Words (Forces Digit-by-Digit)
-# ---------------------------------------------------------
+
 def number_to_hindi_words(num_str):
     digit_map = {
         '0': 'शून्य', '1': 'एक', '2': 'दो', '3': 'तीन', '4': 'चार',
@@ -140,9 +139,9 @@ def number_to_hindi_words(num_str):
     return " ".join([digit_map.get(d, d) for d in num_str if d.isdigit()])
 
 
-# -----------------------------
-# ✅ FORCE STOP TTS (Instant)
-# -----------------------------
+
+# FORCE STOP TTS (Instant)
+
 def stop_tts_immediately():
     global current_tts_process
 
@@ -164,9 +163,9 @@ def stop_tts_immediately():
         pass
 
 
-# -----------------------------
+
 # ESPEAK-NG TTS ENGINE
-# -----------------------------
+
 
 class ESpeakTTS:
     def speak(self, text):
@@ -201,9 +200,8 @@ class ESpeakTTS:
                 print("eSpeak error:", e)
 
 
-# -----------------------------
 # TTS CALLBACK
-# -----------------------------
+
 
 def tts_callback(text):
     if not text:
@@ -277,16 +275,16 @@ is_listening.set()
 
 model_path_full = os.path.join(BASE_DIR, VOSK_MODEL_PATH)
 if not os.path.exists(model_path_full):
-    print(f"❌ Error: Vosk model not found at {model_path_full}")
+    print(f" Error: Vosk model not found at {model_path_full}")
     print("Please download it from alphacephei.com and unpack it.")
     exit(1)
 
 model = Model(MODEL_PATH)
 rec = KaldiRecognizer(model, SAMPLE_RATE)
 
-print("✅ Offline Voice Assistant started!")
-print("🛌 Sleeping mode ON (Say wake word like: 'दीपू' / 'सुनो' / 'hey assistant')")
-print(f"📁 TXT search root: {SEARCH_ROOT_DIR}")
+print("Offline Voice Assistant started!")
+print(" Sleeping mode ON (Say wake word like: 'दीपू' / 'सुनो' / 'hey assistant')")
+print(f" TXT search root: {SEARCH_ROOT_DIR}")
 
 running = True
 awake_until = 0
@@ -298,9 +296,9 @@ BIG_BUFFER = 8000
 
 
 
-# -----------------------------
+
 # commands file execution
-# -----------------------------
+
 
 def load_commands(file_path):
     full_path = os.path.join(BASE_DIR, file_path)
@@ -331,9 +329,9 @@ print("EXIT:", EXIT_COMMANDS[:5])
 print("GREETING:", GREETING_COMMANDS[:5])
 print("TIME:", TIME_COMMANDS[:5])
 
-# -----------------------------
-# ✅ INIT TextReader (Module)
-# -----------------------------
+
+# INIT TextReader (Module)
+
 text_reader = TextReader(
     speak=speak,
     speak_and_wait=speak_and_wait,
@@ -342,9 +340,9 @@ text_reader = TextReader(
 )
 
 
-# -----------------------------
+
 # Intent Recognition
-# -----------------------------
+
 
 def normalize_text(t):
     t = t.lower().strip()
@@ -448,9 +446,9 @@ def recognize_intent(text: str):
     return "unknown", {"text": text}
 
 
-# -----------------------------
+
 # Handle Intent
-# -----------------------------
+
 def handle_intent(intent, slots):
     global awaiting_filename, awaiting_suggestion_choice
     global suggested_files, suggestion_since
@@ -458,10 +456,10 @@ def handle_intent(intent, slots):
     now = time.time()
     raw_text = slots.get("text", "").strip()
 
-    # ======================================================
-    # 🚨 PRIORITY 1: ACTIVE CONTACT FLOW
+    
+    # PRIORITY 1: ACTIVE CONTACT FLOW
     # (Check this FIRST so we don't get "Unknown Command")
-    # ======================================================
+    
     if contact_flow["active"]:
         # Allow user to cancel
         if intent == "exit":
@@ -507,9 +505,9 @@ def handle_intent(intent, slots):
                 speak_and_wait("नंबर समझ नहीं आया।")
             return True
 
-    # ======================================================
-    # 🚨 PRIORITY 2: GET CONTACT FLOW (Asking "Whose number?")
-    # ======================================================
+    
+    #  PRIORITY 2: GET CONTACT FLOW (Asking "Whose number?")
+    
     if get_contact_flow["active"]:
         name = extract_name_from_text(slots.get("text", ""))
         contacts = load_contacts()
@@ -526,9 +524,9 @@ def handle_intent(intent, slots):
         get_contact_flow["active"] = False
         return True
 
-    # ======================================================
-    # 🚨 PRIORITY 3: STANDARD COMMANDS
-    # ======================================================
+    
+    # PRIORITY 3: STANDARD COMMANDS
+    
 
     if intent == "start_contact":
         contact_flow["active"] = True
@@ -613,7 +611,7 @@ def handle_intent(intent, slots):
         if success:
             return True
 
-        # 🔍 Auto-suggest
+        #  Auto-suggest
         suggestions = text_reader.suggest_files(spoken_name)
 
         if not suggestions:
@@ -710,17 +708,17 @@ def handle_intent(intent, slots):
     return True
 
 
-# -----------------------------
+
 # WAKE WORD CHECK
-# -----------------------------
+
 def is_wake_word(text: str) -> bool:
     t = normalize_text(text)
     return any(w in t for w in WAKE_WORDS)
 
 
-# -----------------------------
+
 # eSpeak-NG SPEAK FUNCTIONS
-# -----------------------------
+
 
 current_tts_process = None
 
@@ -780,9 +778,8 @@ def speak_and_wait(text):
     except Exception as e:
         print("eSpeak wait error:", e)
 
-# -----------------------------
+
 # MAIN LOOP
-# -----------------------------
 try:
     MIC_DEVICE, MIC_CHANNELS = find_usb_mic()  # USB PnP Sound Device
     MIC_RATE = 44100  # Standard Sample Rate
@@ -794,7 +791,7 @@ try:
             blocksize=8000,
             dtype="int16",
             channels=MIC_CHANNELS,
-            device=MIC_DEVICE,  # or "hw:1,0" if needed
+            device=MIC_DEVICE,  
             callback=callback):
         print("\n✅ System Online...")
         speak("सिस्टम शुरू हो गया , मैं तैयार हूं")
@@ -816,11 +813,11 @@ try:
 
                 intent, slots = recognize_intent(text)
 
-                handled = False  # 🔑 key flag
+                handled = False  
 
-                # ======================================================
-                # 📖 TEXT READER ACTIVE → allow text controls ONLY
-                # ======================================================
+                
+                #  TEXT READER ACTIVE → allow text controls ONLY
+                
                 if text_reader.is_active():
                     if intent in ("pause_txt", "resume_txt", "stop_txt", "exit"):
                         running = handle_intent(intent, slots)
@@ -828,9 +825,9 @@ try:
                     else:
                         print("📖 Text reading active — ignoring non-text command")
 
-                # ======================================================
-                # 🎧 MUSIC ACTIVE → allow music controls ONLY
-                # ======================================================
+                
+                # MUSIC ACTIVE → allow music controls ONLY
+            
                 elif music_player.is_active():
                     if intent.startswith("music_"):
                         running = handle_intent(intent, slots)
@@ -838,23 +835,23 @@ try:
                     else:
                         print("🎧 Music playing — ignoring non-music command")
 
-                # ======================================================
-                # 🧠 IDLE MODE → normal assistant behavior
-                # ======================================================
+                
+                #  IDLE MODE → normal assistant behavior
+                
                 else:
-                    # ---- filename timeout ----
+                    # filename timeout
                     if awaiting_filename:
                         if time.time() - awaiting_filename_since > FILENAME_TIMEOUT:
                             awaiting_filename = False
                             speak_and_wait("ठीक है, बाद में बताइए।")
 
-                    # ---- suggestion timeout ----
+                    # suggestion timeout
                     if awaiting_suggestion_choice:
                         if time.time() - suggestion_since > SUGGESTION_TIMEOUT:
                             awaiting_suggestion_choice = False
                             speak_and_wait("ठीक है, बाद में बताइए।")
 
-                    # ---- wake-word gating ----
+                    # wake-word gating 
                     if now_ts > awake_until:
                         if not is_wake_word(text):
                             continue
@@ -879,7 +876,7 @@ try:
             time.sleep(0.1)
 
 except KeyboardInterrupt:
-    print("\n🔴 Stopped by user.")
+    print("\n Stopped by user.")
     text_reader.stop_silent()
     music_player.stop()
     speak_and_wait("ठीक है, बंद कर रहा हूँ।")
@@ -888,4 +885,4 @@ except KeyboardInterrupt:
         current_tts_process.terminate()
 
 except Exception as e:
-    print(f"\n❌ Critical Error: {e}")
+    print(f"\n Critical Error: {e}")
