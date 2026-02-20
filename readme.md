@@ -8,7 +8,7 @@ It can understand Hindi voice commands, convert them into text, perform actions,
 
 ---
 
-## 📌 Project Objective
+##  Project Objective
 
 The main objective of this project is to build an offline voice-controlled assistant that:
 
@@ -21,7 +21,7 @@ This project is suitable for embedded systems, IoT applications, and educational
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
 ✔ Fully Offline Operation  
 ✔ Hindi Speech Recognition  
@@ -35,7 +35,7 @@ This project is suitable for embedded systems, IoT applications, and educational
 
 ---
 
-## 🧠 Working Principle
+##  Working Principle
 
 The assistant works in the following steps:
 
@@ -49,9 +49,9 @@ The assistant works in the following steps:
 
 All processing is done locally.
 
----
 
-## 🛠️ Technologies and Tools
+
+##  Technologies and Tools
 
 | Category | Technology |
 |----------|------------|
@@ -63,4 +63,3 @@ All processing is done locally.
 | Platform | Windows / Linux / Raspberry Pi OS |
 | Version Control | Git & GitHub |
 
----
