@@ -8,8 +8,11 @@ It can understand Hindi voice commands, convert them into text, perform actions,
 
 ---
 
-##  Project Objective
 
+ ![VApic](https://github.com/user-attachments/assets/805f7c20-581a-4723-80a8-b95652545c44)
+
+##  Project Objective
+ 
 The main objective of this project is to build an offline voice-controlled assistant that:
 
 - Works without internet
